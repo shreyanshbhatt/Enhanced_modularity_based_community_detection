@@ -1,0 +1,101 @@
+<project name="GraphProcessing" default="jar" basedir=".">
+
+         <property name="src" value="src">
+        </property>
+        <property name="lib" value="lib">
+        </property>
+        <property name="build" value="bin">
+        </property>
+        <property name="tempBuild" value="temp">
+        </property>
+        <!--property name="PackagePath" value="org/knoesis/coordination/twitter"/-->
+
+        <!-- CLEAN PREVIOUS COMPILED VERSION -->
+        <target name="clean">
+                <delete dir="${build}/${tempBuild}" quiet="true">
+                </delete>
+                <delete>
+                        <fileset dir="${build}">
+                                <include name="${ant.project.name}.jar" />
+                        </fileset>
+                </delete>
+        </target>
+
+        <!-- CLEAN older version -->
+         <target name="init" depends="clean">
+        <!-- *** WE ARE NOT DELETING, TO AVOID REPEATABLE BUILDS *** -->
+        <!--target name="init" depends=""-->
+                <mkdir dir="${build}/${tempBuild}" />
+        </target>
+
+        <!-- COMPILE ALL THE SOURCE CODE -->
+                <target name="compile" depends="init">
+
+                <javac srcdir="${src}" destdir="${build}/${tempBuild}" debug="off">
+                        <classpath>
+                                <fileset dir="${lib}">
+                                        <include name="*.jar"/>
+                                </fileset>
+                        </classpath>
+                </javac>
+        </target>
+
+                <target name="jar" depends="compile">
+                <jar destfile="${build}/${ant.project.name}.jar" basedir="${build}/${tempBuild}">
+
+                </jar>
+                </target>
+
+        <!-- EXTRACTION OF INTERACTION-NETWORK Seperately -->
+    <target name="run-fb-evaluation" depends="jar">
+                    <java classname="org.demo.anonymous.ScriptToEvaluate" fork="true" maxmemory="5g">
+                  <jvmarg value="-Xms5g"/>
+                  <jvmarg value="-Xmx5g"/>
+	      <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+	      <jvmarg value="-XX:+UseNUMA"/>
+	      <!--jvmarg value="-XX:+UseParallelGC"/-->
+                            <classpath>
+                                    <fileset dir="${lib}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                                    <fileset dir="${build}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                            </classpath>
+                    </java>
+            </target>
+    <target name="run-gplus-sim" depends="jar">
+                    <java classname="org.demo.anonymous.ScriptToEvaluateGplus" fork="true" maxmemory="15g">
+                  <jvmarg value="-Xms15g"/>
+                  <jvmarg value="-Xmx15g"/>
+	      <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+	      <jvmarg value="-XX:+UseNUMA"/>
+	      <!--jvmarg value="-XX:+UseParallelGC"/-->
+                            <classpath>
+                                    <fileset dir="${lib}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                                    <fileset dir="${build}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                            </classpath>
+                    </java>
+            </target>
+    <target name="run-twitter-sim" depends="jar">
+                    <java classname="demo.anonymous.ScriptToEvaluateTwitter" fork="true" maxmemory="15g">
+                  <jvmarg value="-Xms15g"/>
+                  <jvmarg value="-Xmx15g"/>
+	      <jvmarg value="-XX:+UseConcMarkSweepGC"/>
+	      <jvmarg value="-XX:+UseNUMA"/>
+	      <!--jvmarg value="-XX:+UseParallelGC"/-->
+                            <classpath>
+                                    <fileset dir="${lib}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                                    <fileset dir="${build}">
+                                            <include name="*.jar" />
+                                    </fileset>
+                            </classpath>
+                    </java>
+            </target>
+</project>
